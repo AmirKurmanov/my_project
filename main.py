@@ -1,9 +1,21 @@
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Literal
+from fastapi import Depends
+from typing import Annotated
 
 app = FastAPI()
 
+from fastapi.security.http import HTTPBasic, HTTPBasicCredentials
+from fastapi import Depends, FastAPI, HTTPException, status
+
+BasicSchema = HTTPBasic()
+
+
+class UserSchema(BaseModel):
+    name: str
+    login: str
 
 class AnimalCreateSchema(BaseModel):
     type: str
@@ -20,6 +32,22 @@ class AnimalUpdateSchema(BaseModel):
     type: str | None = None  
     name: str | None = None
 
+
+def authenticate_user(
+    credentials: Annotated[HTTPBasicCredentials | None, Depends(BasicSchema)],
+) -> UserSchema | None:
+    if credentials is None:
+        return None
+
+    if credentials.username != "admin" or credentials.password != "qwerty12":
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+    return UserSchema(name="Иван", login="admin")
+
+
+@app.get("/users/me")
+def get_me(user: Annotated[UserSchema, Depends(authenticate_user)]) -> UserSchema:
+    return user
 
 @app.post("/animals")
 def create_animal(body: AnimalCreateSchema) -> AnimalSchema:
@@ -51,9 +79,7 @@ def update_animal(id: int, body: AnimalUpdateSchema) -> AnimalSchema:
     )
 
 
-@app.delete("/animals/{id}", status_code=204)
-def delete_animal(id: int) -> None:
-    return None  
+
 
 if __name__ == "__main__":
     uvicorn.run(app)
