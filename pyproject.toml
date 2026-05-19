@@ -5,5 +5,14 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.128.6",
+    "pyjwt>=2.12.1",
+    "python-multipart>=0.0.29",
     "rich>=14.2.0",
+    "uvicorn>=0.40.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "animal-store",
 ]

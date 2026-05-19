@@ -1,0 +1,9 @@
+from coffee_shop.users.models import User
+
+
+class UserRepository:
+    def __init__(self): ...
+
+    async def find_by_id(self, id: int) -> User | None: ...
+
+    async def exists_by_login(self, login: str) -> bool: ...
