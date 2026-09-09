@@ -14,7 +14,7 @@ db_manager = DatabaseManager(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with db_manager:
+    async with db_manager:  
         print("Database connected")
         yield
         print("Database disconnected")
