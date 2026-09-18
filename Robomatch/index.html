@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboMatch</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: #f4f6f8;
+            color: #17202a;
+        }
+
+        /* ===== LAYOUT ===== */
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            color: white;
+            padding: 28px 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 45px;
+        }
+
+        .logo span {
+            color: #6ee7b7;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu-item {
+            padding: 13px 14px;
+            border-radius: 10px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 40px 50px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        /* ===== FORM ===== */
+        .form-card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+            margin-bottom: 35px;
+        }
+
+        .form-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #dbe1e7;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+            background: white;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .button-wrapper {
+            margin-top: 22px;
+        }
+
+        .recommend-button {
+            border: none;
+            background: #10b981;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .recommend-button:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .recommend-button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        /* ===== RESULTS ===== */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .results-header h2 {
+            font-size: 24px;
+        }
+
+        .results-count {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .robot-card {
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+            border: 1px solid #edf0f2;
+            transition: 0.2s;
+        }
+
+        .robot-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.1);
+        }
+
+        .robot-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .robot-name {
+            font-size: 21px;
+            font-weight: 750;
+        }
+
+        .robot-id {
+            color: #9ca3af;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .score {
+            min-width: 65px;
+            text-align: center;
+            background: #ecfdf5;
+            color: #047857;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-weight: 800;
+        }
+
+        .score-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 2px;
+        }
+
+        .robot-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-weight: 700;
+        }
+
+        /* ===== REASONS ===== */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .reasons {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .reasons li {
+            font-size: 14px;
+            color: #4b5563;
+            margin-bottom: 7px;
+        }
+
+        .reasons li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: 800;
+            margin-right: 8px;
+        }
+
+        /* ===== ROI ===== */
+        .roi {
+            border-top: 1px solid #edf0f2;
+            padding-top: 18px;
+        }
+
+        .roi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .roi-item {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 11px;
+        }
+
+        .roi-label {
+            color: #6b7280;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .roi-value {
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty {
+            background: white;
+            border-radius: 18px;
+            padding: 60px 30px;
+            text-align: center;
+            color: #6b7280;
+            grid-column: 1 / -1;
+        }
+
+        .empty-icon {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .empty h3 {
+            color: #374151;
+            margin-bottom: 7px;
+        }
+
+        /* ===== ERROR ===== */
+        .error {
+            display: none;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 18px;
+        }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                padding: 30px;
+            }
+
+            .results {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="logo">
+                Robo<span>Match</span>
+            </div>
+            <div class="menu">
+                <div class="menu-item active">
+                    Подбор роботов
+                </div>
+                <div class="menu-item">
+                    Каталог
+                </div>
+                <div class="menu-item">
+                    Сравнение
+                </div>
+                <div class="menu-item">
+                    Экономический эффект
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <div class="header">
+                <h1>Подбор роботизированного решения</h1>
+                <p>
+                    Опишите ваш объект и задачу — система подберёт подходящих роботов
+                    и рассчитает экономический эффект.
+                </p>
+            </div>
+
+            <!-- FORM -->
+            <section class="form-card">
+                <div class="form-title">
+                    Данные объекта
+                </div>
+                <form id="recommendForm">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="objectType">
+                                Тип объекта
+                            </label>
+                            <select id="objectType" required>
+                                <option value="warehouse">Склад</option>
+                                <option value="airport">Аэропорт</option>
+                                <option value="hospital">Медицинское учреждение</option>
+                                <option value="other">Другое</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="area">
+                                Площадь, м²
+                            </label>
+                            <input id="area" type="number" min="1" value="5000" required>
+                        </div>
+                        <div class="field">
+                            <label for="workers">
+                                Количество работников
+                            </label>
+                            <input id="workers" type="number" min="1" value="30" required>
+                        </div>
+                        <div class="field">
+                            <label for="shifts">
+                                Количество смен
+                            </label>
+                            <select id="shifts">
+                                <option value="1">1 смена</option>
+                                <option value="2" selected>2 смены</option>
+                                <option value="3">3 смены</option>
+                            </select>
+                        </div>
+                        <div class="field full">
+                            <label for="task">
+                                Какая задача требуется автоматизировать?
+                            </label>
+                            <textarea id="task" placeholder="Например: перемещение коробок между зонами склада"
+                                required></textarea>
+                        </div>
+                    </div>
+                    <div class="button-wrapper">
+                        <button class="recommend-button" id="recommendButton" type="submit">
+                            Подобрать роботов →
+                        </button>
+                    </div>
+                    <div class="error" id="error"></div>
+                </form>
+            </section>
+
+            <!-- RESULTS -->
+            <section>
+                <div class="results-header">
+                    <h2>Рекомендованные решения</h2>
+                    <div class="results-count" id="resultsCount">
+                        Результаты появятся здесь
+                    </div>
+                </div>
+                <div class="results" id="results">
+                    <div class="empty">
+                        <div class="empty-icon">🤖</div>
+                        <h3>Пока нет рекомендаций</h3>
+                        <p>
+                            Заполните данные объекта и нажмите
+                            «Подобрать роботов».
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const form = document.getElementById("recommendForm");
+        const resultsContainer = document.getElementById("results");
+        const resultsCount = document.getElementById("resultsCount");
+        const button = document.getElementById("recommendButton");
+        const errorBox = document.getElementById("error");
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            errorBox.style.display = "none";
+            button.disabled = true;
+            button.textContent = "Подбираем...";
+
+            const data = {
+                object_type: document.getElementById("objectType").value,
+                area_m2: Number(document.getElementById("area").value),
+                workers: Number(document.getElementById("workers").value),
+                shifts: Number(document.getElementById("shifts").value),
+                task: document.getElementById("task").value
+            };
+
+            try {
+                const response = await fetch(
+                    "http://127.0.0.1:8000/recommend",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Ошибка сервера");
+                }
+
+                const robots = await response.json();
+                renderResults(robots);
+            } catch (error) {
+                errorBox.textContent =
+                    "Не удалось получить рекомендации. Проверьте, запущен ли FastAPI.";
+                errorBox.style.display = "block";
+            } finally {
+                button.disabled = false;
+                button.textContent = "Подобрать роботов →";
+            }
+        });
+
+        function renderResults(robots) {
+            resultsContainer.innerHTML = "";
+            resultsCount.textContent = `Найдено решений: ${robots.length}`;
+
+            if (!robots.length) {
+                resultsContainer.innerHTML = `
+                <div class="empty">
+                    <div class="empty-icon">🤖</div>
+                    <h3>Ничего не найдено</h3>
+                    <p>Попробуйте изменить параметры запроса.</p>
+                </div>
+            `;
+                return;
+            }
+
+            robots.forEach((item, index) => {
+                const robot = item.robot;
+                const roi = item.roi;
+                const reasons = item.reasons
+                    .map(reason => `<li>${reason}</li>`)
+                    .join("");
+
+                const card = document.createElement("div");
+                card.className = "robot-card";
+                card.innerHTML = `
+                <div class="robot-top">
+                    <div>
+                        <div class="robot-name">
+                            ${index === 0 ? "🥇 " : ""}${robot.name}
+                        </div>
+                        <div class="robot-id">
+                            ID: ${robot.id}
+                        </div>
+                    </div>
+                    <div class="score">
+                        <span class="score-label">MATCH</span>
+                        ${item.score}%
+                    </div>
+                </div>
+                <div class="robot-info">
+                    <div class="info-box">
+                        <div class="info-label">Стоимость</div>
+                        <div class="info-value">
+                            ${formatMoney(robot.price)}
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Грузоподъёмность</div>
+                        <div class="info-value">
+                            ${robot.load} кг
+                        </div>
+                    </div>
+                </div>
+                <div class="section-title">
+                    Почему подходит
+                </div>
+                <ul class="reasons">
+                    ${reasons}
+                </ul>
+                <div class="roi">
+                    <div class="section-title">
+                        Экономический эффект
+                    </div>
+                    <div class="roi-grid">
+                        <div class="roi-item">
+                            <div class="roi-label">Экономия / месяц</div>
+                            <div class="roi-value">
+                                ${formatMoney(roi.monthly_saving)}
+                            </div>
+                        </div>
+                        <div class="roi-item">
+                            <div class="roi-label">Экономия / год</div>
+                            <div class="roi-value">
+                                ${formatMoney(roi.yearly_saving)}
+                            </div>
+                        </div>
+                        <div class="roi-item">
+                            <div class="roi-label">Окупаемость</div>
+                            <div class="roi-value">
+                                ${roi.payback_months} мес.
+                            </div>
+                        </div>
+                        <div class="roi-item">
+                            <div class="roi-label">За 5 лет</div>
+                            <div class="roi-value">
+                                ${formatMoney(roi.five_year_saving)}
+                            </div>
+                        </div>
+                        <div class="roi-item">
+                            <div class="roi-label">Заменяет работников</div>
+                            <div class="roi-value">
+                                ${roi.workers_replaced}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+                resultsContainer.appendChild(card);
+            });
+        }
+
+        function formatMoney(value) {
+            return new Intl.NumberFormat("ru-RU").format(value) + " ₽";
+        }
+    </script>
+</body>
+
+</html>
