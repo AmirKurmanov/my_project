@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: robomatch-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: robomatch
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - robomatch_postgres_data:/var/lib/postgresql
+
+volumes:
+  robomatch_postgres_data:

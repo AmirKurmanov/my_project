@@ -3,12 +3,12 @@ from fastapi.responses import FileResponse
 from pathlib import Path
 from database import get_connection
 
-from auth import (
+from auth import ( 
     RegisterRequest,
     LoginRequest, 
     login_user, 
     register_user
-)
+) 
  
 from robots import robots
 from recommendations import RecommendationRequest, recomend_robot
@@ -125,3 +125,85 @@ def db_test():
         "database": "connected",
         "robots_count": count
     }
+
+
+@app.get("/industries")
+def get_industries():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, name
+        FROM industries
+        ORDER BY id
+    """)
+
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return [
+        {
+            "id": row[0], 
+            "name": row[1]
+        }
+        for row in rows
+    ]
+
+@app.get("/robot-solution-types")
+def get_robot_solution_types():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, name
+        FROM robot_solution_types
+        ORDER BY id
+    """)
+
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return [
+        {
+            "id": row[0], 
+            "name": row[1]
+        }
+        for row in rows
+    ]
+
+@app.get("/object-types")
+def get_object_types():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            ot.id, 
+            ot.code, 
+            ot.name, 
+            i.id AS industry_id, 
+            i.name AS industry_name
+        FROM object_types ot
+        JOIN industries i
+            ON i.id = ot.industry_id
+        ORDER BY ot.id
+    """)
+
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return [
+        {
+            "id": row[0], 
+            "code": row[1], 
+            "name": row[2],
+            "industry_id": row[3], 
+            "industry_name": row[4]
+        }
+        for row in rows
+    ]
