@@ -5,12 +5,11 @@ from app.auth import get_password_hash
 
 
 def seed_database(db):
-    """Заполнение БД начальными данными."""
     # Check if already seeded
     if db.query(User).first():
         return
 
-    # ──── Users ────
+    #  Users  
     admin = User(
         email="admin@robopodbor.ru",
         hashed_password=get_password_hash("admin123"),
@@ -26,7 +25,7 @@ def seed_database(db):
     db.add_all([admin, demo_user])
     db.flush()
 
-    # ──── Object Types ────
+    # Object Types  
     warehouse = ObjectType(
         name="Склад",
         slug="warehouse",
@@ -227,7 +226,7 @@ def seed_database(db):
         db.flush()
 
 
-    # ──── Robot Solutions ────
+    #  Robot Solutions 
     solutions = [
         RobotSolution(
             name="Ronavi H1500",
@@ -457,7 +456,7 @@ def seed_database(db):
     db.add_all(solutions)
     db.flush()
 
-    # ──── Demo Project ────
+    # Demo Project  
     demo_project = Project(
         user_id=demo_user.id,
         name="Демо: Складской комплекс «Логистик-Центр»",

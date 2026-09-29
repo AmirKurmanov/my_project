@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+pandas
+openpyxl
+reportlab
+pydantic
+pydantic-settings
+python-dotenv
+aiofiles
+bcrypt
+psycopg[binary]

@@ -21,7 +21,7 @@
 
 ---
 
-## Технологический стек
+## Стек
 
 | Компонент | Технология |
 |-----------|-----------|
@@ -36,32 +36,22 @@
 
 ## Запуск проекта
 
-### Вариант 1: Docker Compose (рекомендуется)
-
 **Предварительные требования:** Docker и Docker Compose
 
 ```bash
-# 1. Клонировать или распаковать проект
 cd robomatch
 
-# 2. Запустить все сервисы
 docker-compose up --build
 
-# 3. Открыть в браузере
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000/api/docs
+Frontend: http://localhost:3000
+Backend API: http://localhost:8000/api/docs
 ```
 
-### Вариант 2: Локальный запуск (без Docker)
+### Локальный запуск
 
 **Предварительные требования:** Python 3.11+, Node.js 18+, SQLite 3+
 
-#### 1. База данных PostgreSQL (Необязательный пункт)
-
-*Проект по умолчанию использует локальную базу SQLite, которая не требует настройки и работает «из коробки». PostgreSQL можно использовать для Production-окружения.*
-
 ```bash
-# Создать БД и пользователя
 psql -U postgres
 CREATE DATABASE robopodbor;
 CREATE USER robopodbor WITH PASSWORD 'robopodbor';
@@ -69,39 +59,26 @@ GRANT ALL PRIVILEGES ON DATABASE robopodbor TO robopodbor;
 \q
 ```
 
-#### 2. Бэкенд
-
 ```bash
 cd backend
 
-# Создать виртуальное окружение
 python -m venv venv
 venv\Scripts\activate        # Windows
-# source venv/bin/activate   # Linux/Mac
+source venv/bin/activate   # Linux/Mac
 
-# Установить зависимости
 pip install -r requirements.txt
 
-# Настроить переменные окружения (отредактировать .env при необходимости)
-# DATABASE_URL=postgresql://robopodbor:robopodbor@localhost:5432/robopodbor
-
-# Запустить сервер
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-
-#### 3. Фронтенд
 
 ```bash
 cd frontend
 
-# Установить зависимости
 npm install
 
-# Запустить dev-сервер
 npm run dev
 ```
 
-#### 4. Открыть в браузере
 - Frontend: http://localhost:5173
 - Backend API Docs: http://localhost:8000/api/docs
 

@@ -8,7 +8,7 @@ if settings.DATABASE_URL.startswith("sqlite"):
 
 engine = create_engine(settings.DATABASE_URL, connect_args=connect_args)
 
-# Enable WAL mode for SQLite for better concurrent access
+
 if settings.DATABASE_URL.startswith("sqlite"):
     @event.listens_for(engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):

@@ -23,7 +23,6 @@ dist/
 Thumbs.db
 
 # Temp files
-*.txt
 !README.md
 
 # Custom additions

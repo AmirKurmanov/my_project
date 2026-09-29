@@ -3,7 +3,7 @@ from typing import Optional, List, Any, Dict
 from pydantic import BaseModel, EmailStr, Field
 
 
-# ──── Auth ────
+#  Auth 
 
 class UserCreate(BaseModel):
     email: str = Field(..., description="Email пользователя")
@@ -37,7 +37,7 @@ class TokenData(BaseModel):
     email: Optional[str] = None
 
 
-# ──── Object Types ────
+#  Object Types 
 
 class ObjectTypeResponse(BaseModel):
     id: int
@@ -52,7 +52,7 @@ class ObjectTypeResponse(BaseModel):
         from_attributes = True
 
 
-# ──── Robot Categories ────
+#  Robot Categories 
 
 class RobotCategoryResponse(BaseModel):
     id: int
@@ -64,7 +64,7 @@ class RobotCategoryResponse(BaseModel):
         from_attributes = True
 
 
-# ──── Robot Solutions ────
+# Robot Solutions 
 
 class RobotSolutionCreate(BaseModel):
     name: str
@@ -151,7 +151,7 @@ class RobotSolutionResponse(BaseModel):
         from_attributes = True
 
 
-# ──── Projects ────
+#  Projects 
 
 class ProjectCreate(BaseModel):
     name: str = Field(..., description="Название проекта")
@@ -194,7 +194,7 @@ class ProjectResponse(BaseModel):
         from_attributes = True
 
 
-# ──── Scenarios ────
+#  Scenarios 
 
 class ScenarioCreate(BaseModel):
     name: str = Field(..., description="Название сценария")
@@ -224,7 +224,7 @@ class ScenarioResponse(BaseModel):
         from_attributes = True
 
 
-# ──── Recommendations ────
+#  Recommendations  
 
 class RecommendationRequest(BaseModel):
     object_type_slug: str
@@ -245,7 +245,7 @@ class RecommendationResponse(BaseModel):
     total: int
 
 
-# ──── Economics ────
+# Economics 
 
 class EconomicCalculationRequest(BaseModel):
     project_parameters: Dict[str, Any]
